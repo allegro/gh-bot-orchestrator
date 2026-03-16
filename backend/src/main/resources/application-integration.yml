@@ -1,0 +1,24 @@
+app:
+  tasks:
+    handle-pull-request-change:
+      sleep-duration: 100ms
+  github:
+    auth:
+      installation-id: 123
+      app-id: 123
+      private-key: 123
+
+logging:
+  level:
+    pl.allegro.tech.common.pullrequestmanager: DEBUG
+
+spring:
+  docker:
+    compose:
+      enabled: true
+      skip:
+        in-tests: false
+
+db-scheduler:
+  threads: 1
+  polling-interval: 100ms

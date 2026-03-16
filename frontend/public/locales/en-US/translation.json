@@ -1,0 +1,9 @@
+{
+    "dashboard": {
+        "title": "Dashboard",
+        "description": "This is the dashboard page."
+    },
+    "about": {
+        "title": "About"
+    }
+}

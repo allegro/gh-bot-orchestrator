@@ -1,0 +1,11 @@
+{
+  "pull_request": {
+    "base": {
+      "ref": "master",
+      "sha": "760ac584a765095f6c1941401fe703f130b882f9",
+      "repo": {
+        "full_name": "some-org/some-repository"
+      }
+    }
+  }
+}

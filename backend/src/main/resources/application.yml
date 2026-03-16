@@ -1,0 +1,34 @@
+app:
+  github:
+    server:
+      base-url: https://api.github.com
+    auth:
+      token-time-to-live: 1H
+      installation-id: 56833735
+      app-id: 1048033
+  tasks:
+    handle-pull-request-change:
+      sleep-duration: 1s
+  cleanup:
+    workflow-run-availability:
+      interval: PT5M
+      max-age: PT10M
+db-scheduler:
+  enabled: true
+  threads: 1
+  polling-interval: 1s
+  polling-strategy: LOCK_AND_FETCH
+  polling-strategy-lower-limit-fraction-of-threads: 0.5
+  polling-strategy-upper-limit-fraction-of-threads: 1.0
+
+spring:
+  aop:
+    proxy-target-class: false
+  docker:
+    compose:
+      enabled: false
+
+logging:
+  level:
+    pl.allegro.tech.common.pullrequestmanager.domain.filtering: DEBUG
+    pl.allegro.tech.common.pullrequestmanager.application.PullRequestEventHandler: DEBUG

@@ -1,0 +1,29 @@
+# Environment variables are loaded from the .env file in the project root by the Gradle run task.
+# Set them there to override the defaults below.
+app:
+  # Base URL of this service, used to build callback URLs sent to GitHub Actions (check-callback-url).
+  # When running locally, GitHub Actions cannot reach localhost — set APP_BASE_URL to your machine's
+  # external IP.
+  base-url: ${APP_BASE_URL:http://localhost:8080}
+  github:
+    auth:
+      # GitHub App credentials — required for GitHub API calls and workflow dispatch.
+      private-key: ${GITHUB_APP_PRIVATE_KEY:dummy}
+      app-id: ${GITHUB_APP_ID:0}
+      installation-id: ${GITHUB_APP_INSTALLATION_ID:0}
+    server:
+      base-url: https://api.github.com
+spring:
+  docker:
+    compose:
+      enabled: true
+  datasource:
+    url: jdbc:postgresql://localhost:${DB_PORT:5432}/mydatabase
+    username: myuser
+    password: secret
+  flyway:
+    locations: "classpath:/db/migration,classpath:/db/local"
+
+logging:
+  level:
+    pl.allegro.tech.common.pullrequestmanager: DEBUG

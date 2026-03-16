@@ -1,0 +1,48 @@
+{
+    "pull_request": {
+        "url": "http://example.com",
+        "number": 234,
+        "title": "Some PR title",
+        "body": "Pull request introducing some feature",
+        "user": {
+            "login": "some-user",
+            "id": 8,
+            "type": null
+        },
+        "head": {
+            "ref": "som-ref",
+            "sha": "909abe27a85c9accde8c1fdb19d0fb234cff3e1e",
+            "repo": {
+                "id": 123,
+                "name": "some-repository",
+                "full_name": "some-org/some-repository",
+                "owner": {
+                    "login": "some-org",
+                    "id": 1,
+                    "type": null
+                },
+                "topics": [],
+                "custom_properties": {}
+            }
+        },
+        "base": {
+            "ref": "master",
+            "sha": "760ac584a765095f6c1941401fe703f130b882f9",
+            "repo": {
+                "id": 123,
+                "name": "some-repository",
+                "full_name": "some-org/some-repository",
+                "owner": {
+                    "login": "some-org",
+                    "id": 1,
+                    "type": null
+                },
+                "topics": [],
+                "custom_properties": {}
+            }
+        },
+        "merged": false,
+        "updated_at": "2024-12-17T11:56:39.000Z",
+        "html_url": "http://example.com"
+    }
+}
