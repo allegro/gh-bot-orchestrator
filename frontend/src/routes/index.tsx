@@ -1,9 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Button, Group, Stack, Title } from "@mantine/core";
+import { Button, Group, Stack } from "@mantine/core";
 import { createWorkflowDefinition, getWorkflowsDefinitions, updateWorkflowDefinition } from "../api.ts";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import FullScreenLoader from "../components/FullScreenLoader.tsx";
-import { useTranslation } from "react-i18next";
 import { WorkflowsTable } from "../components/WorkflowsTable.tsx";
 import { IconPlus } from "@tabler/icons-react";
 import { modals } from "@mantine/modals";
@@ -17,7 +16,6 @@ export const Route = createFileRoute("/")({
 
 function Dashboard() {
     const workflowsQuery = useSuspenseQuery(getWorkflowsDefinitions());
-    const { t } = useTranslation();
 
     const createMutation = useMutation({
         mutationFn: createWorkflowDefinition,
@@ -61,8 +59,7 @@ function Dashboard() {
 
     return (
         <Stack>
-            <Group justify="space-between">
-                <Title order={2}>{t("dashboard.title")}</Title>
+            <Group justify="flex-end">
                 <AddWorkflowButton onSubmit={handleSubmit} />
             </Group>
             <WorkflowsTable

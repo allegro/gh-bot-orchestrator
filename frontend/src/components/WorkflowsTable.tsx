@@ -73,12 +73,12 @@ export function WorkflowsTable({ onEdit, workflows, onToggle }: WorkflowsTablePr
 function WorkflowToggleButton({ state, onClick }: { state: boolean; onClick: () => void }) {
     if (state)
         return (
-            <ActionIcon variant="subtle" color="red" onClick={onClick}>
+            <ActionIcon variant="subtle" color="green" onClick={onClick}>
                 <IconPower size={16} />
             </ActionIcon>
         );
     return (
-        <ActionIcon variant="subtle" color="green" onClick={onClick}>
+        <ActionIcon variant="subtle" color="red" onClick={onClick}>
             <IconPower size={16} />
         </ActionIcon>
     );
