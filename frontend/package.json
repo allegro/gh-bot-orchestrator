@@ -1,0 +1,69 @@
+{
+    "name": "github-workflow-orchestrator-frontend",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "start": "vite --port 3000",
+        "build": "tsc -b && vite build",
+        "test": "vitest run",
+        "lint": "eslint .",
+        "preview": "vite preview",
+        "prepare": "cd .. && husky",
+        "generate-types": "npx --yes swagger-typescript-api generate -o ./src -n api-types.ts -p http://localhost:8080/status/openapi --no-client --sort-types",
+        "generate-autosuggestions": "node ./scripts/generate-autocomplete-suggestions.mjs"
+    },
+    "dependencies": {
+        "@mantine/charts": "^7.17.5",
+        "@mantine/core": "^7.17.5",
+        "@mantine/dates": "^7.17.5",
+        "@mantine/form": "^7.17.5",
+        "@mantine/hooks": "^7.17.5",
+        "@mantine/modals": "^7.17.5",
+        "@mantine/notifications": "^7.17.5",
+        "@tabler/icons-react": "^3.31.0",
+        "@tanstack/react-query": "^5.74.11",
+        "@tanstack/react-router": "^1.117.1",
+        "@testing-library/jest-dom": "^6.6.3",
+        "axios": "^1.9.0",
+        "dayjs": "^1.11.13",
+        "i18next-browser-languagedetector": "^8.0.5",
+        "i18next-http-backend": "^3.0.2",
+        "jsdom": "^26.1.0",
+        "react": "^19.1.0",
+        "react-dom": "^19.1.0",
+        "react-error-boundary": "^5.0.0",
+        "react-i18next": "^15.5.1"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.25.1",
+        "@tanstack/react-router-devtools": "^1.117.1",
+        "@tanstack/router-plugin": "^1.117.2",
+        "@testing-library/dom": "^10.4.0",
+        "@testing-library/react": "^16.3.0",
+        "@types/react": "^19.1.2",
+        "@types/react-dom": "^19.1.2",
+        "@vitejs/plugin-react": "^4.4.1",
+        "eslint": "^9.31.0",
+        "eslint-config-prettier": "^10.1.2",
+        "eslint-plugin-react-hooks": "^5.2.0",
+        "eslint-plugin-react-refresh": "^0.4.20",
+        "globals": "^16.0.0",
+        "husky": "^9.1.7",
+        "lint-staged": "^15.5.1",
+        "postcss": "^8.5.3",
+        "postcss-preset-mantine": "^1.17.0",
+        "postcss-simple-vars": "^7.0.1",
+        "prettier": "3.5.3",
+        "typescript": "~5.8.3",
+        "typescript-eslint": "^8.31.1",
+        "vite": "^6.3.4",
+        "vitest": "^3.1.2"
+    },
+    "optionalDependencies": {
+        "@rollup/rollup-linux-x64-gnu": "4.40.1"
+    },
+    "lint-staged": {
+        "*.ts,*.tsx": "eslint --fix",
+        "**/*": "prettier --write --ignore-unknown"
+    }
+}
