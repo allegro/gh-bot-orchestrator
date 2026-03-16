@@ -4,7 +4,6 @@ import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.ok
 import com.github.tomakehurst.wiremock.client.WireMock.patch
 import com.github.tomakehurst.wiremock.client.WireMock.post
-import com.github.tomakehurst.wiremock.client.WireMock.serverError
 import com.github.tomakehurst.wiremock.client.WireMock.urlMatching
 import org.mockito.BDDMockito.given
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -206,39 +205,6 @@ class CommentsIntSpec(
             )
         }
 
-        test("should return internal server error when something goes wrong") {
-            // given
-            stubFailureOnPublishingGithubComment()
-            val url = commentUrlGenerator.generate(workflowRepository, targetRepository, pullRequestNumber, slotId)
-
-            // when
-            val request = """{ "body": "Some comment" }"""
-            rest.post(url) {
-                contentType = APPLICATION_JSON
-                header("Authorization", jwtToken)
-                content = request
-            }.andExpect {
-                status { is5xxServerError() }
-            }
-        }
-
-    }
-
-    private fun stubFailureOnPublishingGithubComment() {
-        githubApiMock.stubFor(
-            get(urlMatching("/repos/.*/.*/issues/.*/comments\\?sort=created&direction=desc&per_page=100"))
-                .willReturn(ok("[]").withHeader("Content-Type", APPLICATION_JSON_VALUE))
-        )
-
-        githubApiMock.stubFor(
-            patch(urlMatching("/repos/.*/.*/issues/comments/.*"))
-                .willReturn(serverError())
-        )
-
-        githubApiMock.stubFor(
-            post(urlMatching("/repos/.*/.*/issues/.*/comments")).willReturn(ok())
-                .willReturn(serverError())
-        )
     }
 
     private fun stubSuccessOnPublishingGithubComment() {

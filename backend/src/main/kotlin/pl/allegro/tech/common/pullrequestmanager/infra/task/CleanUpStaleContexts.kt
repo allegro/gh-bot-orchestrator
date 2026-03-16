@@ -6,15 +6,15 @@ import com.github.kagkarlsson.scheduler.task.helper.RecurringTask
 import com.github.kagkarlsson.scheduler.task.schedule.FixedDelay
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.jdbc.core.JdbcTemplate
-import pl.allegro.tech.tech.postgrestaskscheduler.api.TaskName
 import java.sql.Timestamp
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
-val CLEAN_UP_STALE_CONTEXTS = TaskName("clean-up-stale-contexts")
+private const val CLEAN_UP_STALE_CONTEXTS = "clean-up-stale-contexts"
+
 class CleanUpStaleContexts(
     private val jdbcTemplate: JdbcTemplate,
-) : RecurringTask<Unit>(CLEAN_UP_STALE_CONTEXTS.raw, FixedDelay.ofHours(24), Unit::class.java) {
+) : RecurringTask<Unit>(CLEAN_UP_STALE_CONTEXTS, FixedDelay.ofHours(24), Unit::class.java) {
 
     override fun executeRecurringly(
         taskInstance: TaskInstance<Unit?>?,

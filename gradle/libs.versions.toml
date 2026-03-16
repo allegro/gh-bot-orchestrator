@@ -13,7 +13,7 @@ kotest-wiremock = "3.1.0"
 kotlin = "2.3.10"
 kotlin-logging = "8.0.01"
 mockk = "1.14.9"
-postgres-task-scheduler = "10.0.1"
+db-scheduler = "16.7.0"
 postgresql = "42.7.10"
 spring-boot-docker-compose = "3.4.4"
 springdoc-openapi = "2.8.6"
@@ -34,7 +34,7 @@ postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "pos
 spring-boot-docker-compose = { group = "org.springframework.boot", name = "spring-boot-docker-compose", version.ref = "spring-boot-docker-compose" }
 spring-boot-starter-data-jdbc = { group = "org.springframework.boot", name = "spring-boot-starter-data-jdbc" }
 springdoc-openapi-starter-webmvc-ui = { group = "org.springdoc", name = "springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc-openapi" }
-task-scheduler-postgres = { group = "pl.allegro.tech.tech", name = "postgres-task-scheduler", version.ref = "postgres-task-scheduler" }
+db-scheduler-spring-boot-starter = { group = "com.github.kagkarlsson", name = "db-scheduler-spring-boot-starter", version.ref = "db-scheduler" }
 
 # Spring Boot Dependencies
 spring-boot-dependencies = { group = "org.springframework.boot", name = "spring-boot-dependencies", version.ref = "spring-boot" }

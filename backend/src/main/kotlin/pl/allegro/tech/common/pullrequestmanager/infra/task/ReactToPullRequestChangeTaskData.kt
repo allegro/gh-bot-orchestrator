@@ -1,10 +1,10 @@
 package pl.allegro.tech.common.pullrequestmanager.infra.task
 
+import com.github.kagkarlsson.scheduler.task.TaskDescriptor
 import pl.allegro.tech.common.pullrequestmanager.api.PullRequestEvent
-import pl.allegro.tech.tech.postgrestaskscheduler.api.TaskName
 import java.util.UUID
 
-val HANDLE_PULL_REQUEST = TaskName("handle-pull-request")
+val HANDLE_PULL_REQUEST: TaskDescriptor<ReactToPullRequestChangeTaskData> =
+    TaskDescriptor.of("handle-pull-request", ReactToPullRequestChangeTaskData::class.java)
 
-data class ReactToPullRequestChangeTaskData(val workflowId: UUID, val event: PullRequestEvent) {
-}
+data class ReactToPullRequestChangeTaskData(val workflowId: UUID, val event: PullRequestEvent)

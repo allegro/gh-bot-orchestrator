@@ -1,22 +1,19 @@
 package pl.allegro.tech.common.pullrequestmanager.infra.task
 
+import com.github.kagkarlsson.scheduler.SchedulerClient
+import com.github.kagkarlsson.scheduler.SchedulerClient.ScheduleOptions
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import pl.allegro.tech.common.pullrequestmanager.api.CheckRunEvent
 import pl.allegro.tech.common.pullrequestmanager.domain.workflows.WorkflowDefinitionsReader
-import pl.allegro.tech.tech.postgrestaskscheduler.api.TaskAdder
-import pl.allegro.tech.tech.postgrestaskscheduler.api.TaskId
-import pl.allegro.tech.tech.postgrestaskscheduler.api.TaskMetadata
-import pl.allegro.tech.tech.postgrestaskscheduler.api.TaskParams
-import pl.allegro.tech.tech.postgrestaskscheduler.api.TaskSpecification
 import java.time.Clock
 import java.util.UUID
 
 @Component
 class ReactToCheckRunScheduler(
     private val clock: Clock,
-    private val taskAdder: TaskAdder,
+    private val scheduler: SchedulerClient,
     private val workflowDefinitionsReader: WorkflowDefinitionsReader
 ) {
 
@@ -46,7 +43,15 @@ class ReactToCheckRunScheduler(
                             )
                         }
 
-                        taskAdder.addTask(taskBasedOn(workflow.id, pullRequest.number, event))
+                        val delivery = event.delivery ?: event.data.checkRun.id.toString()
+                        scheduler.schedule(
+                            HANDLE_CHECK_RUN
+                                .instance("${delivery}@${workflow.id}@${pullRequest.number}")
+                                .data(ReactToCheckRunTaskData(workflow.id, pullRequest.number, event))
+                                .build(),
+                            clock.instant(),
+                            ScheduleOptions.WHEN_EXISTS_DO_NOTHING
+                        )
                     } catch (e: Exception) {
                         logger.atError {
                             cause = e
@@ -63,17 +68,6 @@ class ReactToCheckRunScheduler(
                     }
                 }
             }
-    }
-
-    private fun taskBasedOn(workflowId: UUID, pullRequestNumber: Int, event: CheckRunEvent): TaskSpecification<ReactToCheckRunTaskData> {
-        val delivery = event.delivery ?: event.data.checkRun.id.toString()
-        return TaskSpecification(
-            id = TaskId("${delivery}@${workflowId}@${pullRequestNumber}"),
-            name = HANDLE_CHECK_RUN,
-            params = TaskParams(ReactToCheckRunTaskData(workflowId, pullRequestNumber, event)),
-            scheduleAt = clock.instant(),
-            meta = TaskMetadata()
-        )
     }
 
     companion object {

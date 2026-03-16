@@ -20,7 +20,7 @@ dependencies {
     implementation(libs.auth0.jwks.rsa)
     implementation(libs.java.semver)
     implementation(libs.json.path)
-    implementation(libs.task.scheduler.postgres)
+    implementation(libs.db.scheduler.spring.boot.starter)
     implementation(libs.postgresql)
     implementation(libs.spring.boot.starter.data.jdbc)
     implementation(libs.spring.boot.docker.compose)

@@ -1,22 +1,19 @@
 package pl.allegro.tech.common.pullrequestmanager.infra.task
 
+import com.github.kagkarlsson.scheduler.SchedulerClient
+import com.github.kagkarlsson.scheduler.SchedulerClient.ScheduleOptions
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import pl.allegro.tech.common.pullrequestmanager.api.PullRequestEvent
 import pl.allegro.tech.common.pullrequestmanager.domain.workflows.WorkflowDefinitionsReader
-import pl.allegro.tech.tech.postgrestaskscheduler.api.TaskAdder
-import pl.allegro.tech.tech.postgrestaskscheduler.api.TaskId
-import pl.allegro.tech.tech.postgrestaskscheduler.api.TaskMetadata
-import pl.allegro.tech.tech.postgrestaskscheduler.api.TaskParams
-import pl.allegro.tech.tech.postgrestaskscheduler.api.TaskSpecification
 import java.time.Clock
 import java.util.*
 
 @Component
 class ReactToPullRequestChangeScheduler(
     private val clock: Clock,
-    private val taskAdder: TaskAdder,
+    private val scheduler: SchedulerClient,
     private val workflowDefinitionsReader: WorkflowDefinitionsReader
 ) {
 
@@ -39,7 +36,14 @@ class ReactToPullRequestChangeScheduler(
                         )
                     }
 
-                    taskAdder.addTask(taskBasedOn(workflow.id, event))
+                    scheduler.schedule(
+                        HANDLE_PULL_REQUEST
+                            .instance("${event.delivery}@${workflow.id}")
+                            .data(ReactToPullRequestChangeTaskData(workflow.id, event))
+                            .build(),
+                        clock.instant(),
+                        ScheduleOptions.WHEN_EXISTS_DO_NOTHING
+                    )
                 } catch (e: Exception) {
                     logger.atError {
                         cause = e
@@ -55,16 +59,6 @@ class ReactToPullRequestChangeScheduler(
                     throw e
                 }
             }
-    }
-
-    private fun taskBasedOn(workflowId: UUID, event: PullRequestEvent): TaskSpecification<ReactToPullRequestChangeTaskData> {
-        return TaskSpecification(
-            id = TaskId("${event.delivery}@$workflowId"),
-            name = HANDLE_PULL_REQUEST,
-            params = TaskParams(ReactToPullRequestChangeTaskData(workflowId, event)),
-            scheduleAt = clock.instant(),
-            meta = TaskMetadata()
-        )
     }
 
     companion object {

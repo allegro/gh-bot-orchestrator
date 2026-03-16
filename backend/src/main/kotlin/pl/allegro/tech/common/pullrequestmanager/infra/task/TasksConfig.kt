@@ -1,5 +1,9 @@
 package pl.allegro.tech.common.pullrequestmanager.infra.task
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.kagkarlsson.scheduler.boot.config.DbSchedulerCustomizer
+import com.github.kagkarlsson.scheduler.serializer.JacksonSerializer
+import com.github.kagkarlsson.scheduler.serializer.Serializer
 import com.github.kagkarlsson.scheduler.task.FailureHandler.OnFailureRetryLater
 import com.github.kagkarlsson.scheduler.task.helper.OneTimeTask
 import com.github.kagkarlsson.scheduler.task.helper.Tasks
@@ -12,7 +16,7 @@ import pl.allegro.tech.common.pullrequestmanager.application.CheckRunEventHandle
 import pl.allegro.tech.common.pullrequestmanager.application.PullRequestEventHandler
 import pl.allegro.tech.common.pullrequestmanager.domain.NoSlotsAvailable
 import pl.allegro.tech.common.pullrequestmanager.domain.workflows.WorkflowDefinitionsReader
-import pl.allegro.tech.tech.postgrestaskscheduler.handler.HandlerFactory
+import java.util.Optional
 
 @Configuration
 class TasksConfig(
@@ -23,28 +27,37 @@ class TasksConfig(
 ) {
 
     @Bean
-    fun reactToPullRequestsChanges(handlerFactory: HandlerFactory): OneTimeTask<ReactToPullRequestChangeTaskData> {
+    fun dbSchedulerCustomizer(objectMapper: ObjectMapper): DbSchedulerCustomizer {
+        return object : DbSchedulerCustomizer {
+            override fun serializer(): Optional<Serializer> {
+                return Optional.of(JacksonSerializer(objectMapper))
+            }
+        }
+    }
+
+    @Bean
+    fun reactToPullRequestsChanges(): OneTimeTask<ReactToPullRequestChangeTaskData> {
         return Tasks
-            .oneTime(HANDLE_PULL_REQUEST.raw, ReactToPullRequestChangeTaskData::class.java)
+            .oneTime(HANDLE_PULL_REQUEST)
             .onFailure(OnFailureRetryLater(props.sleepDuration))
             .onDeadExecutionRevive()
-            .execute(handlerFactory.create { task, _ ->
+            .execute { inst, _ ->
                 try {
-                    MDC.put("pullRequest", task.data.event.data.pullRequest.htmlUrl)
-                    MDC.put("pullRequestNumber", task.data.event.data.pullRequest.number.toString())
-                    MDC.put("repo", task.data.event.data.repository.fullName)
-                    MDC.put("ref", task.data.event.data.pullRequest.head.ref)
-                    MDC.put("workflowId", task.data.workflowId.toString())
-                    MDC.put("delivery", task.data.event.delivery)
-                    MDC.put("action", task.data.event.data.action)
+                    MDC.put("pullRequest", inst.data.event.data.pullRequest.htmlUrl)
+                    MDC.put("pullRequestNumber", inst.data.event.data.pullRequest.number.toString())
+                    MDC.put("repo", inst.data.event.data.repository.fullName)
+                    MDC.put("ref", inst.data.event.data.pullRequest.head.ref)
+                    MDC.put("workflowId", inst.data.workflowId.toString())
+                    MDC.put("delivery", inst.data.event.delivery)
+                    MDC.put("action", inst.data.event.data.action)
 
-                    logger.info { "Handling task ${task.id} for PR ${task.data.event.data.pullRequest.htmlUrl}" }
-                    val workflowConfiguration = workflowDefinitionsReader.getDefinitionFor(task.data.workflowId)
-                    eventHandler.handle(workflowConfiguration, task.data.event)
+                    logger.info { "Handling task ${inst.id} for PR ${inst.data.event.data.pullRequest.htmlUrl}" }
+                    val workflowConfiguration = workflowDefinitionsReader.getDefinitionFor(inst.data.workflowId)
+                    eventHandler.handle(workflowConfiguration, inst.data.event)
                 } catch (e: NoSlotsAvailable) {
-                    logger.error(e) { "No available slots for ${task.taskName}/${task.id} for PR ${task.data.event.data.pullRequest.htmlUrl}" }
+                    logger.error(e) { "No available slots for ${inst.taskName}/${inst.id} for PR ${inst.data.event.data.pullRequest.htmlUrl}" }
                 } catch (e: Exception) {
-                    logger.error(e) { "Failed handling ${task.id} for PR ${task.data.event.data.pullRequest.htmlUrl}" }
+                    logger.error(e) { "Failed handling ${inst.id} for PR ${inst.data.event.data.pullRequest.htmlUrl}" }
                 } finally {
                     MDC.remove("pullRequest")
                     MDC.remove("pullRequestNumber")
@@ -54,30 +67,30 @@ class TasksConfig(
                     MDC.remove("action")
                     MDC.remove("delivery")
                 }
-            })
+            }
     }
 
     @Bean
-    fun reactToCheckRunEvents(handlerFactory: HandlerFactory): OneTimeTask<ReactToCheckRunTaskData> {
+    fun reactToCheckRunEvents(): OneTimeTask<ReactToCheckRunTaskData> {
         return Tasks
-            .oneTime(HANDLE_CHECK_RUN.raw, ReactToCheckRunTaskData::class.java)
+            .oneTime(HANDLE_CHECK_RUN)
             .onFailure(OnFailureRetryLater(props.sleepDuration))
             .onDeadExecutionRevive()
-            .execute(handlerFactory.create { task, _ ->
+            .execute { inst, _ ->
                 try {
-                    MDC.put("repo", task.data.event.data.repository.fullName)
-                    MDC.put("checkRunId", task.data.event.data.checkRun.id.toString())
-                    MDC.put("pullRequestNumber", task.data.pullRequestNumber.toString())
-                    MDC.put("workflowId", task.data.workflowId.toString())
-                    MDC.put("action", task.data.event.data.action)
+                    MDC.put("repo", inst.data.event.data.repository.fullName)
+                    MDC.put("checkRunId", inst.data.event.data.checkRun.id.toString())
+                    MDC.put("pullRequestNumber", inst.data.pullRequestNumber.toString())
+                    MDC.put("workflowId", inst.data.workflowId.toString())
+                    MDC.put("action", inst.data.event.data.action)
 
-                    logger.info { "Handling task ${task.id} for check_run ${task.data.event.data.checkRun.id} and pull_request #${task.data.pullRequestNumber}" }
-                    val workflowConfiguration = workflowDefinitionsReader.getDefinitionFor(task.data.workflowId)
-                    checkRunEventHandler.handle(workflowConfiguration, task.data.event, task.data.pullRequestNumber)
+                    logger.info { "Handling task ${inst.id} for check_run ${inst.data.event.data.checkRun.id} and pull_request #${inst.data.pullRequestNumber}" }
+                    val workflowConfiguration = workflowDefinitionsReader.getDefinitionFor(inst.data.workflowId)
+                    checkRunEventHandler.handle(workflowConfiguration, inst.data.event, inst.data.pullRequestNumber)
                 } catch (e: NoSlotsAvailable) {
-                    logger.error(e) { "No available slots for ${task.taskName}/${task.id} for check_run ${task.data.event.data.checkRun.id}" }
+                    logger.error(e) { "No available slots for ${inst.taskName}/${inst.id} for check_run ${inst.data.event.data.checkRun.id}" }
                 } catch (e: Exception) {
-                    logger.error(e) { "Failed handling ${task.id} for check_run ${task.data.event.data.checkRun.id}" }
+                    logger.error(e) { "Failed handling ${inst.id} for check_run ${inst.data.event.data.checkRun.id}" }
                 } finally {
                     MDC.remove("repo")
                     MDC.remove("checkRunId")
@@ -85,7 +98,7 @@ class TasksConfig(
                     MDC.remove("workflowId")
                     MDC.remove("action")
                 }
-            })
+            }
     }
 
     @Bean

@@ -27,5 +27,3 @@ spring:
 logging:
   level:
     pl.allegro.tech.common.pullrequestmanager: DEBUG
-    com.github.kagkarlsson.scheduler: DEBUG
-    pl.allegro.tech.tech.postgrestaskscheduler: DEBUG

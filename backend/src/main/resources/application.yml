@@ -20,25 +20,6 @@ db-scheduler:
   polling-strategy: LOCK_AND_FETCH
   polling-strategy-lower-limit-fraction-of-threads: 0.5
   polling-strategy-upper-limit-fraction-of-threads: 1.0
-  allegro:
-    retry-delay: 10s
-    default-execution-delay: 0
-    metrics:
-      succeeded:
-        refreshIntervalInMs: 3600000
-    executor:
-      task-queue-size: 100
-      keep-alive-time: 600s
-      request-timeout: 45s
-    task-log:
-      enabled: true
-      retention:
-        enabled: true
-        cleanup-succeeded-tasks-after-days: 7
-        cleanup-task-execution-cron: "0 0 3 * * *"
-    maintenance:
-      task-endpoint:
-        enabled: true
 
 spring:
   aop:
@@ -46,10 +27,6 @@ spring:
   docker:
     compose:
       enabled: false
-
-andamio:
-  metrics:
-    autogenerate-class-method-tags: true
 
 logging:
   level:

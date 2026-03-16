@@ -22,5 +22,3 @@ spring:
 db-scheduler:
   threads: 1
   polling-interval: 100ms
-  allegro:
-    retry-delay: 100ms

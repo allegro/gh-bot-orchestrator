@@ -205,12 +205,3 @@ tests).
 See the [plugin docs](https://github.com/radarsh/gradle-test-logger-plugin/blob/develop/README.md) for all
 possible configuration options.
 
-### How to release new version:
-
-Every push to main increments the patch version and publishes the package to the artifactory.
-If you want to change minor or major version, you can push the tag manually.
-
-### Links
-
-* [Kotlin Lang](https://kotlinlang.org)
-* [Andamio stack documentation](https://rtd.allegrogroup.com/docs/andamio-starter/en/latest/)
