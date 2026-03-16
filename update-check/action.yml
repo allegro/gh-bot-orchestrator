@@ -1,0 +1,30 @@
+name: Update Check
+inputs:
+  check-callback-url:
+    required: true
+    description: Check callback URL retrieved from gh-bot-orchestrator
+  conclusion:
+    required: true
+    description: 'Conclusion of the check. Can be one of: action_required, cancelled, failure, neutral, success, skipped, stale, timed_out'
+  title:
+    required: true
+    description: Title of the check
+  summary:
+    required: true
+    description: Check summary
+  details:
+    required: true
+    description: Check details
+runs:
+  using: composite
+  steps:
+    - name: Update check
+      shell: bash
+      env:
+        LINK_TO_WORKFLOW_RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        CHECK_CALLBACK_URL: ${{ inputs.check-callback-url }}
+      run: |
+        curl \
+          -X POST $CHECK_CALLBACK_URL \
+          -H "Content-Type: application/json" \
+          --data '{"status": "${{ inputs.conclusion }}", "detailsPage": {"title": "${{ inputs.title }}", "summary": "${{ inputs.summary }}", "details": "${{ inputs.details }}"}}'

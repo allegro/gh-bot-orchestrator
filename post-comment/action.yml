@@ -1,0 +1,18 @@
+name: Post comment
+inputs:
+  comment-callback-url:
+    required: true
+    description: comment callback url retrieved from gh-bot-orchestrator
+  message:
+    required: true
+    description: 'Content of the comment'
+runs:
+  using: composite
+  steps:
+    - name: Post comment
+      shell: bash
+      run: |
+        JSON=$(jq -Rn --arg msg "$MESSAGE" '{"body": $msg, "mode": "NEW"}')
+        curl -X POST ${{ inputs.comment-callback-url }} -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" -H "Content-Type: application/json" --data "$JSON"
+      env:
+        MESSAGE: ${{ inputs.message }}
