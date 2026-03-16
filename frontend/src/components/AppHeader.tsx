@@ -24,7 +24,7 @@ export function AppHeader({
                     <Group>
                         <IconBrandGithub color="white" size={30} />
                         <Title c="white" order={3} style={{ whiteSpace: "nowrap" }}>
-                            Pull Request Manager
+                            GitHub Workflow Orchestrator
                         </Title>
                     </Group>
                 </UnstyledButton>

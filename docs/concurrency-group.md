@@ -6,9 +6,9 @@ called [concurrency group](https://docs.github.com/en/actions/writing-workflows/
 In essence it specifies how many concurrent jobs can be run in single group.
 In essence it specifies how many `concurrent jobs` can be run within single group.
 
-pull-request-manager will deliver you two concurrency groups as paramaters to your workflow:
+github-workflow-orchestrator will deliver you two concurrency groups as paramaters to your workflow:
 
-In `pull-request-manager` you can specify concurrency-group this way:
+In `github-workflow-orchestrator` you can specify concurrency-group this way:
 - `workflow-concurrency-group`
 - `concurrency-group`
 

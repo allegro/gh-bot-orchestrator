@@ -11,7 +11,7 @@ and one in progress run in the same concurrency group):
 
 https://github.com/orgs/community/discussions/5435
 
-That's why we decided to control amount of concurrency from Pull Request Manager.
+That's why we decided to control amount of concurrency from GitHub Workflow Orchestrator.
 
 ## How it works
 

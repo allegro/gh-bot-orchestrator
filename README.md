@@ -1,4 +1,4 @@
-pull-request-manager
+github-workflow-orchestrator
 ==============================
 
 ## Context
@@ -84,7 +84,7 @@ Intention behind this service is to provide simple way to integrate with Github 
     run: |
         curl -X POST ${{ inputs.check-callback-url }} -H "Content-Type: application/json" --data '{"status": "success"}'
    ```
-2. You add entry to configuration in this service (pull-request-manager-config). Example entry looks like that:
+2. You add entry to configuration in this service (github-workflow-orchestrator-config). Example entry looks like that:
 
 ```yaml
     some-name:
