@@ -1,0 +1,62 @@
+[versions]
+andamio = "10.0.0"
+flyway-core = "11.20.3"
+flyway-database-postgresql = "11.20.2"
+integration-test = "2.2.5"
+java-jwt = "4.5.0"
+java-semver = "0.10.2"
+json-path = "3.0.0"
+jwks-rsa = "0.23.0"
+kotest = "5.9.1"
+kotest-spring = "1.3.0"
+kotest-wiremock = "3.1.0"
+kotlin = "2.3.10"
+kotlin-logging = "8.0.01"
+mockk = "1.14.9"
+postgres-task-scheduler = "10.0.1"
+postgresql = "42.7.10"
+spring-boot-docker-compose = "3.4.4"
+springdoc-openapi = "2.8.6"
+test-logger = "4.0.0"
+
+[libraries]
+# Core Dependencies
+auth0-java-jwt = { group = "com.auth0", name = "java-jwt", version.ref = "java-jwt" }
+auth0-jwks-rsa = { group = "com.auth0", name = "jwks-rsa", version.ref = "jwks-rsa" }
+flyway-core = { group = "org.flywaydb", name = "flyway-core", version.ref = "flyway-core" }
+flyway-database-postgresql = { group = "org.flywaydb", name = "flyway-database-postgresql", version.ref = "flyway-database-postgresql" }
+jackson-datatype = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310" }
+jackson-kotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin" }
+java-semver = { group = "com.github.zafarkhaja", name = "java-semver", version.ref = "java-semver" }
+json-path = { group = "com.jayway.jsonpath", name = "json-path", version.ref = "json-path" }
+kotlin-logging = { group = "io.github.oshai", name = "kotlin-logging-jvm", version.ref = "kotlin-logging" }
+postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
+spring-boot-docker-compose = { group = "org.springframework.boot", name = "spring-boot-docker-compose", version.ref = "spring-boot-docker-compose" }
+spring-boot-starter-data-jdbc = { group = "org.springframework.boot", name = "spring-boot-starter-data-jdbc" }
+springdoc-openapi-starter-webmvc-ui = { group = "org.springdoc", name = "springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc-openapi" }
+task-scheduler-postgres = { group = "pl.allegro.tech.tech", name = "postgres-task-scheduler", version.ref = "postgres-task-scheduler" }
+
+# Allegro Dependencies
+andamio-starter = { group = "pl.allegro.tech.common", name = "andamio-starter-dependencies", version.ref = "andamio" }
+andamio-webmvc = { group = "pl.allegro.tech.common", name = "andamio-starter-webmvc" }
+
+# Test Dependencies
+spring-boot-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+
+kotest-junit5 = { group = "io.kotest", name = "kotest-runner-junit5-jvm", version.ref = "kotest" }
+kotest-datatest = { group = "io.kotest", name = "kotest-framework-datatest-jvm", version.ref = "kotest" }
+kotest-spring = { group = "io.kotest.extensions", name = "kotest-extensions-spring", version.ref = "kotest-spring" }
+kotest-wiremock = { group = "io.kotest.extensions", name = "kotest-extensions-wiremock", version.ref = "kotest-wiremock" }
+kotest-property = { group = "io.kotest", name = "kotest-property", version.ref = "kotest" }
+kotest-assertions-json = { group = "io.kotest", name = "kotest-assertions-json", version.ref = "kotest" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+integration-test = { id = "com.coditory.integration-test", version.ref = "integration-test" }
+test-logger = { id = "com.adarshr.test-logger", version.ref = "test-logger" }
+
+[bundles]
+kotest = ['kotest-junit5', 'kotest-datatest', 'kotest-spring', 'kotest-wiremock', 'mockk', "kotest-property", "kotest-assertions-json"]

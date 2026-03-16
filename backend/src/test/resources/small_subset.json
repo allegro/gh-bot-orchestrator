@@ -1,0 +1,12 @@
+{
+    "pull_request": {
+        "base": {
+            "ref": "master"
+        }
+    },
+    "repository": {
+        "owner": {
+            "login": "some-org"
+        }
+    }
+}
