@@ -1,12 +1,5 @@
 package pl.allegro.tech.common.pullrequestmanager.infra.postgres
 
-import PersistedWorkflowDefinition
-import PersistedWorkflowDefinition.Check
-import PersistedWorkflowDefinition.Check.DetailsPage
-import PersistedWorkflowDefinition.Filters
-import PersistedWorkflowDefinition.Mapping
-import PersistedWorkflowDefinition.Matcher
-import PersistedWorkflowDefinition.Repository
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.support.GeneratedKeyHolder
@@ -15,6 +8,13 @@ import pl.allegro.tech.common.pullrequestmanager.domain.filtering.CompoundPullRe
 import pl.allegro.tech.common.pullrequestmanager.domain.filtering.DependabotMatcher
 import pl.allegro.tech.common.pullrequestmanager.domain.filtering.FilePathMatcher
 import pl.allegro.tech.common.pullrequestmanager.domain.filtering.JsonPathMatcher
+import pl.allegro.tech.common.pullrequestmanager.domain.workflows.PersistedWorkflowDefinition
+import pl.allegro.tech.common.pullrequestmanager.domain.workflows.PersistedWorkflowDefinition.Check
+import pl.allegro.tech.common.pullrequestmanager.domain.workflows.PersistedWorkflowDefinition.Check.DetailsPage
+import pl.allegro.tech.common.pullrequestmanager.domain.workflows.PersistedWorkflowDefinition.Filters
+import pl.allegro.tech.common.pullrequestmanager.domain.workflows.PersistedWorkflowDefinition.Mapping
+import pl.allegro.tech.common.pullrequestmanager.domain.workflows.PersistedWorkflowDefinition.Matcher
+import pl.allegro.tech.common.pullrequestmanager.domain.workflows.PersistedWorkflowDefinition.Repository
 import pl.allegro.tech.common.pullrequestmanager.domain.workflows.WorkflowDefinitionRepository
 import pl.allegro.tech.common.pullrequestmanager.domain.workflows.api.WorkflowDefinition.ConcurrencyGroupType
 import pl.allegro.tech.common.pullrequestmanager.domain.workflows.api.WorkflowDefinition.MatchingStrategy

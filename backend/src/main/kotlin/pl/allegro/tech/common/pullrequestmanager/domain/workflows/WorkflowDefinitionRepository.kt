@@ -1,8 +1,7 @@
 package pl.allegro.tech.common.pullrequestmanager.domain.workflows
 
-import PersistedWorkflowDefinition
 import pl.allegro.tech.common.pullrequestmanager.domain.workflows.api.WorkflowDefinitionToAdd
-import java.util.*
+import java.util.UUID
 
 interface WorkflowDefinitionRepository {
 

@@ -1,6 +1,5 @@
 package pl.allegro.tech.common.pullrequestmanager.domain.workflows
 
-import PersistedWorkflowDefinition
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Component
 import pl.allegro.tech.common.pullrequestmanager.domain.PullRequestEventMapper
@@ -14,7 +13,7 @@ import pl.allegro.tech.common.pullrequestmanager.domain.workflows.api.WorkflowDe
 import pl.allegro.tech.common.pullrequestmanager.domain.workflows.api.WorkflowDefinition.ConcurrencyGroupType.ONE_JOB_PER_REPOSITORY
 import pl.allegro.tech.common.pullrequestmanager.domain.workflows.api.WorkflowDefinition.OneJobPerPullRequest
 import pl.allegro.tech.common.pullrequestmanager.domain.workflows.api.WorkflowDefinition.OneJobPerRepository
-import java.util.*
+import java.util.UUID
 
 @Component
 data class WorkflowDefinitionsReader(

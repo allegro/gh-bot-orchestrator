@@ -5,7 +5,6 @@ import org.slf4j.MDC
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
-import pl.allegro.tech.common.andamio.metrics.micrometer.Timed
 import pl.allegro.tech.common.pullrequestmanager.api.CheckRunUpdateRequest.DetailsPageUpdateRequest
 import pl.allegro.tech.common.pullrequestmanager.api.WorkflowRunFinishedEvent
 import pl.allegro.tech.common.pullrequestmanager.domain.AvailableSlots
@@ -13,7 +12,6 @@ import pl.allegro.tech.common.pullrequestmanager.domain.GithubClient
 import pl.allegro.tech.common.pullrequestmanager.domain.SlotContext
 import pl.allegro.tech.common.pullrequestmanager.domain.SlotId
 import pl.allegro.tech.common.pullrequestmanager.domain.comment.CommentCallbackUrlRepository
-import java.util.UUID
 
 @Component
 class WorkflowRunFinishedEventHandler(
@@ -22,7 +20,6 @@ class WorkflowRunFinishedEventHandler(
     private val githubClient: GithubClient,
 ) {
 
-    @Timed(name = "workflow-finished-event-handler")
     @Transactional
     fun handle(slotId: SlotId, event: WorkflowRunFinishedEvent) { // todo: fix packages to not have dependnecy on API
         try {

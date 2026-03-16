@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
-import pl.allegro.tech.common.andamio.metrics.micrometer.Timed
 import pl.allegro.tech.common.pullrequestmanager.api.PullRequestEvent
 import pl.allegro.tech.common.pullrequestmanager.domain.GithubClient
 import pl.allegro.tech.common.pullrequestmanager.domain.PullRequest
@@ -18,7 +17,6 @@ class PullRequestEventHandler(
     private val workflowDispatcher: WorkflowDispatcher,
     private val objectMapper: ObjectMapper,
 ) {
-    @Timed(name = "pull-request-event-handler")
     @Transactional
     fun handle(workflowDefinition: WorkflowDefinition, event: PullRequestEvent) {
         val pullRequest = event.toDomain(objectMapper)

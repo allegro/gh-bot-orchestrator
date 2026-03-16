@@ -10,8 +10,8 @@ kotlin {
 }
 
 dependencies {
-    implementation(platform(libs.andamio.starter))
-    implementation(libs.andamio.webmvc)
+    implementation(platform(libs.spring.boot.dependencies))
+    implementation(libs.spring.boot.starter.web)
 
     implementation(libs.kotlin.logging)
     implementation(libs.jackson.kotlin)

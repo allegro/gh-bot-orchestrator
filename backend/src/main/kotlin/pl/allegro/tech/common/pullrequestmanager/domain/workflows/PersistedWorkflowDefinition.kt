@@ -1,4 +1,6 @@
-package pl.allegro.tech.common.pullrequestmanager.domain.workflowsimport pl.allegro.tech.common.pullrequestmanager.domain.workflows.api.WorkflowDefinition.ConcurrencyGroupType
+package pl.allegro.tech.common.pullrequestmanager.domain.workflows
+
+import pl.allegro.tech.common.pullrequestmanager.domain.workflows.api.WorkflowDefinition
 import pl.allegro.tech.common.pullrequestmanager.domain.workflows.api.WorkflowDefinition.MatchingStrategy
 import java.time.Instant
 import java.util.*
@@ -8,7 +10,7 @@ data class PersistedWorkflowDefinition(
     val enabled: Boolean,
     val repository: Repository,
     val ref: String,
-    val concurrencyGroup: ConcurrencyGroupType,
+    val concurrencyGroup: WorkflowDefinition.ConcurrencyGroupType,
     val filters: Filters,
     val mapping: Mapping,
     val check: Check,

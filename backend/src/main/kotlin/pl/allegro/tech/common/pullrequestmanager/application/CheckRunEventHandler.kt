@@ -9,7 +9,6 @@ import pl.allegro.tech.common.pullrequestmanager.domain.WorkflowDispatcher
 import pl.allegro.tech.common.pullrequestmanager.domain.workflows.api.WorkflowDefinition
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
-import pl.allegro.tech.common.andamio.metrics.micrometer.Timed
 import java.time.Instant
 
 @Component
@@ -17,7 +16,6 @@ class CheckRunEventHandler(
     private val workflowDispatcher: WorkflowDispatcher,
     private val objectMapper: ObjectMapper,
 ) {
-    @Timed(name = "check-run-event-handler")
     @Transactional
     fun handle(workflowDefinition: WorkflowDefinition, event: CheckRunEvent, pullRequestNumber: Int) {
         val lastUpdateTimestamp = Instant.parse(

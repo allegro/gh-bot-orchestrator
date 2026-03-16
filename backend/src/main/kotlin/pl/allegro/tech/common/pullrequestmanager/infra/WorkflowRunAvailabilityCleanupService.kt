@@ -4,7 +4,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import pl.allegro.tech.common.andamio.metrics.micrometer.Timed
 import java.sql.Timestamp
 import java.time.Instant
 
@@ -15,7 +14,6 @@ class WorkflowRunAvailabilityCleanupService(
 ) {
 
     @Scheduled(fixedRateString = "\${app.cleanup.workflow-run-availability.interval}")
-    @Timed(name = "workflow-run-availability-cleanup")
     fun cleanupOldWorkflowRunAvailabilityRecords() {
         val cutoffTime = Instant.now().minus(properties.maxAge)
 

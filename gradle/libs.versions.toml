@@ -1,5 +1,5 @@
 [versions]
-andamio = "10.0.0"
+spring-boot = "3.5.10"
 flyway-core = "11.20.3"
 flyway-database-postgresql = "11.20.2"
 integration-test = "2.2.5"
@@ -36,9 +36,9 @@ spring-boot-starter-data-jdbc = { group = "org.springframework.boot", name = "sp
 springdoc-openapi-starter-webmvc-ui = { group = "org.springdoc", name = "springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc-openapi" }
 task-scheduler-postgres = { group = "pl.allegro.tech.tech", name = "postgres-task-scheduler", version.ref = "postgres-task-scheduler" }
 
-# Allegro Dependencies
-andamio-starter = { group = "pl.allegro.tech.common", name = "andamio-starter-dependencies", version.ref = "andamio" }
-andamio-webmvc = { group = "pl.allegro.tech.common", name = "andamio-starter-webmvc" }
+# Spring Boot Dependencies
+spring-boot-dependencies = { group = "org.springframework.boot", name = "spring-boot-dependencies", version.ref = "spring-boot" }
+spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
 
 # Test Dependencies
 spring-boot-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }

@@ -9,7 +9,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpHeaders.ACCEPT
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.web.client.RestClient
-import pl.allegro.tech.common.andamio.metrics.micrometer.Timed
 import pl.allegro.tech.common.pullrequestmanager.api.CheckRunUpdateRequest
 import pl.allegro.tech.common.pullrequestmanager.domain.CheckDetails
 import pl.allegro.tech.common.pullrequestmanager.domain.CheckRunUpdated
@@ -182,7 +181,6 @@ class RestGithubClient(
             ?: error("Could not find comments for pull request $pullRequestNumber in repository ${repo.fullName}")
     }
 
-    @Timed(name = "github_response_time")
     override fun getPullRequestFiles(repo: Repository, pullRequestNumber: Int): Sequence<PullRequestFileDto> {
         val uri = "$githubBaseUrl/repos/${repo.id.owner}/${repo.id.name}/pulls/${pullRequestNumber}/files"
         return paginate(uri) { paginatedUri ->
