@@ -6,9 +6,10 @@ interface WorkflowsTableProps {
     workflows: WorkflowDefinitionResponse[];
     onEdit: (workflow: WorkflowDefinitionResponse) => void;
     onToggle: (workflow: WorkflowDefinitionResponse) => void;
+    onDelete: (workflow: WorkflowDefinitionResponse) => void;
 }
 
-export function WorkflowsTable({ onEdit, workflows, onToggle }: WorkflowsTableProps) {
+export function WorkflowsTable({ onEdit, workflows, onToggle, onDelete }: WorkflowsTableProps) {
     const rows = workflows.map((workflow) => (
         <Table.Tr key={workflow.id}>
             <Table.Td>
@@ -44,7 +45,7 @@ export function WorkflowsTable({ onEdit, workflows, onToggle }: WorkflowsTablePr
                         </ActionIcon>
                     </Tooltip>
                     <Tooltip label="Delete">
-                        <ActionIcon variant="subtle" color="red" onClick={console.log}>
+                        <ActionIcon variant="subtle" color="red" onClick={() => onDelete(workflow)}>
                             <IconTrash size={16} />
                         </ActionIcon>
                     </Tooltip>

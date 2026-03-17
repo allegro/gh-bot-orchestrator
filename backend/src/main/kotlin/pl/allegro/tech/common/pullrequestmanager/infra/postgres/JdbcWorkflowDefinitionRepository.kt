@@ -118,6 +118,16 @@ open class JdbcWorkflowDefinitionRepository(
         insertFilters(id, workflowDefinitionToAdd.filters)
     }
 
+    @Transactional
+    override fun delete(id: UUID) {
+        deleteMapping(id)
+        deleteFilters(id)
+        jdbcTemplate.update(
+            "DELETE FROM workflow_definitions WHERE id = :id",
+            mapOf("id" to id)
+        )
+    }
+
     private fun insertFilters(workflowId: UUID, filters: CompoundPullRequestMatcher) {
         val keyHolder = GeneratedKeyHolder()
         jdbcTemplate.update(

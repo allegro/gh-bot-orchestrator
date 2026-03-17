@@ -47,3 +47,12 @@ export async function updateWorkflowDefinition(id: string, workflow: WorkflowDef
     });
     return response.data;
 }
+
+export async function deleteWorkflowDefinition(id: string): Promise<void> {
+    await axios.delete(`/api/workflows/${id}`);
+    notifications.show({
+        title: "Success",
+        message: "Workflow deleted successfully",
+        color: "green",
+    });
+}

@@ -59,6 +59,13 @@ class WorkflowDefinitionsEndpoint(
         return toResponse(updated)
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun deleteWorkflowDefinition(@PathVariable id: String) {
+        val workflowId = UUID.fromString(id)
+        workflowDefinitionsEditor.deleteDefinition(workflowId)
+    }
+
     private fun toWorkflowDefinitionToAdd(request: WorkflowDefinitionRequest): WorkflowDefinitionToAdd {
         val concurrencyGroup = when (request.concurrencyGroup) {
             ConcurrencyGroupType.ONE_JOB_PER_REPOSITORY -> WorkflowDefinition.OneJobPerRepository

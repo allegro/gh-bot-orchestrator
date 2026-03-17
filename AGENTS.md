@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**GitHub Workflow Orchestrator** is a service that orchestrates GitHub Actions workflows triggered by pull request events. It receives GitHub webhook events (`pull_request`, `check_run`, `workflow_run`), matches them against configurable workflow definitions stored in PostgreSQL, and dispatches GitHub Actions workflows via the GitHub API.
+**GitHub Workflow Orchestrator** is a service that orchestrates GitHub Actions workflows triggered by pull request events. It receives GitHub webhook events (`pull_request`, `check_run`), matches them against configurable workflow definitions stored in PostgreSQL, and dispatches GitHub Actions workflows via the GitHub API.
 
 Key capabilities:
 - Configurable event filtering (JsonPath matchers, file path matchers, Dependabot matchers)

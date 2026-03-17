@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Button, Group, Stack } from "@mantine/core";
-import { createWorkflowDefinition, getWorkflowsDefinitions, updateWorkflowDefinition } from "../api.ts";
+import { createWorkflowDefinition, deleteWorkflowDefinition, getWorkflowsDefinitions, updateWorkflowDefinition } from "../api.ts";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import FullScreenLoader from "../components/FullScreenLoader.tsx";
 import { WorkflowsTable } from "../components/WorkflowsTable.tsx";
@@ -40,6 +40,13 @@ function Dashboard() {
         },
     });
 
+    const deleteMutation = useMutation({
+        mutationFn: deleteWorkflowDefinition,
+        onSuccess: () => {
+            workflowsQuery.refetch();
+        },
+    });
+
     const handleSubmit = (workflow: WorkflowDefinitionRequest, id?: string) => {
         if (id) {
             updateMutation.mutate({ id, workflow });
@@ -55,6 +62,17 @@ function Dashboard() {
             enabled: !workflow.enabled,
         };
         toggleMutation.mutate({ id, workflow: updatedWorkflow });
+    };
+
+    const handleDelete = (workflow: WorkflowDefinitionResponse) => {
+        modals.openConfirmModal({
+            title: "Delete workflow",
+            centered: true,
+            children: `Are you sure you want to delete the workflow "${workflow.workflowFilename}"? This action cannot be undone.`,
+            labels: { confirm: "Delete", cancel: "Cancel" },
+            confirmProps: { color: "red" },
+            onConfirm: () => deleteMutation.mutate(workflow.id),
+        });
     };
 
     return (
@@ -74,6 +92,7 @@ function Dashboard() {
                     })
                 }
                 onToggle={handleToggle}
+                onDelete={handleDelete}
             />
         </Stack>
     );

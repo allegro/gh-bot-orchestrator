@@ -15,4 +15,8 @@ data class WorkflowDefinitionsEditor(
     fun updateDefinition(id: UUID, workflowDefinitionToAdd: WorkflowDefinitionToAdd) {
         workflowDefinitionRepository.update(id, workflowDefinitionToAdd)
     }
+
+    fun deleteDefinition(id: UUID) {
+        workflowDefinitionRepository.delete(id)
+    }
 }

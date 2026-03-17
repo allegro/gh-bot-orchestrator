@@ -11,4 +11,5 @@ interface WorkflowDefinitionRepository {
     fun exists(repositoryName: String, repositoryOwner: String, ref: String, path: String): Boolean
     fun insert(workflowDefinitionToAdd: WorkflowDefinitionToAdd): UUID
     fun update(id: UUID, workflowDefinitionToAdd: WorkflowDefinitionToAdd)
+    fun delete(id: UUID)
 }
