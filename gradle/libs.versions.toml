@@ -16,7 +16,7 @@ mockk = "1.14.9"
 db-scheduler = "16.7.0"
 postgresql = "42.7.10"
 spring-boot-docker-compose = "3.4.4"
-springdoc-openapi = "2.8.6"
+springdoc-openapi = "3.0.2"
 test-logger = "4.0.0"
 
 [libraries]
