@@ -1,0 +1,195 @@
+# -- Number of application replicas
+replicaCount: 1
+
+image:
+  # -- Container image repository
+  repository: ghcr.io/allegro/gh-workflow-orchestrator
+  # -- Image pull policy
+  pullPolicy: IfNotPresent
+  # -- Overrides the image tag (defaults to Chart appVersion)
+  tag: ""
+
+# -- Image pull secrets for private registries
+imagePullSecrets: []
+# -- Override the chart name
+nameOverride: ""
+# -- Override the full release name
+fullnameOverride: ""
+
+serviceAccount:
+  # -- Whether to create a service account
+  create: true
+  # -- Annotations for the service account
+  annotations: {}
+  # -- Name of the service account (generated if not set)
+  name: ""
+
+# -- Pod annotations
+podAnnotations: {}
+
+# -- Pod security context
+podSecurityContext:
+  fsGroup: 1000
+
+# -- Container security context
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  readOnlyRootFilesystem: false
+  allowPrivilegeEscalation: false
+
+service:
+  # -- Service type
+  type: ClusterIP
+  # -- Service port
+  port: 8080
+
+ingress:
+  # -- Enable ingress
+  enabled: false
+  # -- Ingress class name
+  className: ""
+  # -- Ingress annotations
+  annotations: {}
+  # -- Ingress hosts
+  hosts:
+    - host: github-workflow-orchestrator.local
+      paths:
+        - path: /
+          pathType: Prefix
+  # -- Ingress TLS configuration
+  tls: []
+
+# -- Container resource requests and limits
+resources: {}
+  # requests:
+  #   cpu: 250m
+  #   memory: 512Mi
+  # limits:
+  #   cpu: "1"
+  #   memory: 1Gi
+
+# -- Node selector
+nodeSelector: {}
+
+# -- Tolerations
+tolerations: []
+
+# -- Affinity rules
+affinity: {}
+
+# Application configuration
+app:
+  # -- Base URL for callback URLs sent to GitHub Actions.
+  # Must be reachable from GitHub Actions runners.
+  baseUrl: "http://localhost:8080"
+  # -- Spring profiles to activate (comma-separated). Do NOT include "default".
+  springProfiles: "production"
+
+  github:
+    # -- GitHub API base URL
+    serverBaseUrl: "https://api.github.com"
+    auth:
+      # -- GitHub App ID
+      appId: ""
+      # -- GitHub App installation ID
+      installationId: ""
+      # -- GitHub App private key (PEM).
+      # Provide via --set-file or reference an existing secret.
+      privateKey: ""
+      # -- Use an existing secret for GitHub App credentials instead of creating one.
+      # The secret must contain keys: github-app-id, github-installation-id, github-private-key
+      existingSecret: ""
+      # -- Token TTL for cached GitHub App tokens
+      tokenTimeToLive: "1H"
+
+  tasks:
+    handlePullRequestChange:
+      # -- Sleep duration between pull request change processing attempts
+      sleepDuration: "1s"
+
+  cleanup:
+    workflowRunAvailability:
+      # -- Interval for workflow run availability cleanup
+      interval: "PT5M"
+      # -- Max age for workflow run availability records
+      maxAge: "PT10M"
+
+  dbScheduler:
+    # -- Enable db-scheduler
+    enabled: true
+    # -- Number of db-scheduler threads
+    threads: 1
+    # -- Polling interval for db-scheduler
+    pollingInterval: "1s"
+
+# PostgreSQL configuration
+postgresql:
+  # -- Enable bundled PostgreSQL deployment.
+  # Disable if using an external database.
+  enabled: true
+
+  image:
+    # -- PostgreSQL image repository
+    repository: postgres
+    # -- PostgreSQL image tag
+    tag: "16"
+    # -- PostgreSQL image pull policy
+    pullPolicy: IfNotPresent
+
+  auth:
+    # -- PostgreSQL database name
+    database: "mydatabase"
+    # -- PostgreSQL username
+    username: "myuser"
+    # -- PostgreSQL password.
+    # Ignored if existingSecret is set.
+    password: "secret"
+    # -- Use an existing secret for PostgreSQL credentials.
+    # The secret must contain keys: postgresql-password
+    existingSecret: ""
+
+  # -- PostgreSQL container port
+  port: 5432
+
+  persistence:
+    # -- Enable persistent storage for PostgreSQL
+    enabled: true
+    # -- Storage class (empty string uses the default)
+    storageClass: ""
+    # -- Access modes for the PVC
+    accessModes:
+      - ReadWriteOnce
+    # -- PVC size
+    size: 5Gi
+
+  # -- PostgreSQL resource requests and limits
+  resources: {}
+    # requests:
+    #   cpu: 100m
+    #   memory: 256Mi
+    # limits:
+    #   cpu: 500m
+    #   memory: 512Mi
+
+  # -- PostgreSQL node selector
+  nodeSelector: {}
+
+  # -- PostgreSQL tolerations
+  tolerations: []
+
+# External database configuration (used when postgresql.enabled is false)
+externalDatabase:
+  # -- External database host
+  host: ""
+  # -- External database port
+  port: 5432
+  # -- External database name
+  database: "mydatabase"
+  # -- External database username
+  username: "myuser"
+  # -- External database password
+  password: ""
+  # -- Use an existing secret for external database credentials.
+  # The secret must contain key: postgresql-password
+  existingSecret: ""

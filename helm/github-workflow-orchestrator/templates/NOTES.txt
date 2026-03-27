@@ -1,0 +1,52 @@
+GitHub Workflow Orchestrator has been deployed!
+
+{{- if .Values.ingress.enabled }}
+
+The application is available at:
+{{- range $host := .Values.ingress.hosts }}
+  {{- range .paths }}
+  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
+  {{- end }}
+{{- end }}
+
+{{- else if contains "NodePort" .Values.service.type }}
+
+Get the application URL by running:
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "github-workflow-orchestrator.fullname" . }})
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:$NODE_PORT
+
+{{- else if contains "LoadBalancer" .Values.service.type }}
+
+Get the application URL by running:
+  NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+  kubectl get --namespace {{ .Release.Namespace }} svc {{ include "github-workflow-orchestrator.fullname" . }} -w
+
+{{- else if contains "ClusterIP" .Values.service.type }}
+
+The application is running on port {{ .Values.service.port }} within the cluster.
+
+Access it via port-forward:
+  kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ include "github-workflow-orchestrator.fullname" . }} 8080:{{ .Values.service.port }}
+
+Then visit: http://localhost:8080
+
+{{- end }}
+
+{{- if .Values.postgresql.enabled }}
+
+A PostgreSQL instance has been deployed alongside the application.
+Database: {{ .Values.postgresql.auth.database }}
+User:     {{ .Values.postgresql.auth.username }}
+
+{{- end }}
+
+{{- if not .Values.app.github.auth.appId }}
+
+WARNING: GitHub App credentials are not configured!
+Set them via values or an existing secret:
+  --set app.github.auth.appId=YOUR_APP_ID
+  --set app.github.auth.installationId=YOUR_INSTALLATION_ID
+  --set-file app.github.auth.privateKey=path/to/private-key.pem
+
+{{- end }}

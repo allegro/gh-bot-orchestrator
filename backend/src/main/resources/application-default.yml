@@ -16,7 +16,7 @@ app:
 spring:
   docker:
     compose:
-      enabled: true
+      enabled: false
   datasource:
     url: jdbc:postgresql://localhost:${DB_PORT:5432}/mydatabase
     username: myuser

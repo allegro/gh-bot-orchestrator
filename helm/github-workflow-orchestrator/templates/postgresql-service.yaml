@@ -1,0 +1,17 @@
+{{- if .Values.postgresql.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "github-workflow-orchestrator.postgresql.fullname" . }}
+  labels:
+    {{- include "github-workflow-orchestrator.postgresql.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.postgresql.port }}
+      targetPort: postgresql
+      protocol: TCP
+      name: postgresql
+  selector:
+    {{- include "github-workflow-orchestrator.postgresql.selectorLabels" . | nindent 4 }}
+{{- end }}

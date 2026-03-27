@@ -1,10 +1,13 @@
 plugins {
-    application
-    `maven-publish`
+    java
+    alias(libs.plugins.axion.release)
+    id("conventions.spring-boot")
     id("conventions.dot-env")
 }
 
-application {
+version = scmVersion.version
+
+springBoot {
     mainClass = "pl.allegro.tech.github.botorchestrator.AppRunnerKt"
 }
 
