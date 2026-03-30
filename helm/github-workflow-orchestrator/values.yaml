@@ -53,7 +53,7 @@ ingress:
   annotations: {}
   # -- Ingress hosts
   hosts:
-    - host: github-workflow-orchestrator.local
+    - host: gh-bot-orchestrator.local
       paths:
         - path: /
           pathType: Prefix

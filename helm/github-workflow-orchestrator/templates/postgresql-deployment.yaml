@@ -2,20 +2,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "github-workflow-orchestrator.postgresql.fullname" . }}
+  name: {{ include "gh-bot-orchestrator.postgresql.fullname" . }}
   labels:
-    {{- include "github-workflow-orchestrator.postgresql.labels" . | nindent 4 }}
+    {{- include "gh-bot-orchestrator.postgresql.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "github-workflow-orchestrator.postgresql.selectorLabels" . | nindent 6 }}
+      {{- include "gh-bot-orchestrator.postgresql.selectorLabels" . | nindent 6 }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        {{- include "github-workflow-orchestrator.postgresql.selectorLabels" . | nindent 8 }}
+        {{- include "gh-bot-orchestrator.postgresql.selectorLabels" . | nindent 8 }}
     spec:
       securityContext:
         fsGroup: 999
@@ -37,7 +37,7 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "github-workflow-orchestrator.postgresql.secretName" . }}
+                  name: {{ include "gh-bot-orchestrator.postgresql.secretName" . }}
                   key: postgresql-password
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
@@ -78,7 +78,7 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: {{ include "github-workflow-orchestrator.postgresql.fullname" . }}
+            claimName: {{ include "gh-bot-orchestrator.postgresql.fullname" . }}
       {{- end }}
       {{- with .Values.postgresql.nodeSelector }}
       nodeSelector:

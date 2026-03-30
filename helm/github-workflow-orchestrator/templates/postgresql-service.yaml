@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "github-workflow-orchestrator.postgresql.fullname" . }}
+  name: {{ include "gh-bot-orchestrator.postgresql.fullname" . }}
   labels:
-    {{- include "github-workflow-orchestrator.postgresql.labels" . | nindent 4 }}
+    {{- include "gh-bot-orchestrator.postgresql.labels" . | nindent 4 }}
 spec:
   type: ClusterIP
   ports:
@@ -13,5 +13,5 @@ spec:
       protocol: TCP
       name: postgresql
   selector:
-    {{- include "github-workflow-orchestrator.postgresql.selectorLabels" . | nindent 4 }}
+    {{- include "gh-bot-orchestrator.postgresql.selectorLabels" . | nindent 4 }}
 {{- end }}

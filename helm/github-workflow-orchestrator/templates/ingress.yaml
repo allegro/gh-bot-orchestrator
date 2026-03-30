@@ -2,9 +2,9 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "github-workflow-orchestrator.fullname" . }}
+  name: {{ include "gh-bot-orchestrator.fullname" . }}
   labels:
-    {{- include "github-workflow-orchestrator.labels" . | nindent 4 }}
+    {{- include "gh-bot-orchestrator.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -33,7 +33,7 @@ spec:
             pathType: {{ .pathType }}
             backend:
               service:
-                name: {{ include "github-workflow-orchestrator.fullname" $ }}
+                name: {{ include "gh-bot-orchestrator.fullname" $ }}
                 port:
                   name: http
           {{- end }}

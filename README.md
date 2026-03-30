@@ -81,12 +81,12 @@ docker push myregistry.example.com/my-org/gh-workflow-orchestrator:v1.0.0
 
 ### Installing with Helm
 
-The Helm chart is located at `helm/github-workflow-orchestrator/`. It deploys the application together with a bundled PostgreSQL instance by default.
+The Helm chart is located at `helm/gh-bot-orchestrator/`. It deploys the application together with a bundled PostgreSQL instance by default.
 
 #### Quick start (bundled PostgreSQL)
 
 ```bash
-helm install gwo ./helm/github-workflow-orchestrator \
+helm install gwo ./helm/gh-bot-orchestrator \
   --set image.repository=myregistry.example.com/my-org/gh-workflow-orchestrator \
   --set image.tag=v1.0.0 \
   --set app.baseUrl=https://gwo.example.com \
@@ -102,7 +102,7 @@ helm install gwo ./helm/github-workflow-orchestrator \
 Disable the bundled PostgreSQL and point to your own:
 
 ```bash
-helm install gwo ./helm/github-workflow-orchestrator \
+helm install gwo ./helm/gh-bot-orchestrator \
   --set postgresql.enabled=false \
   --set externalDatabase.host=my-postgres.example.com \
   --set externalDatabase.port=5432 \
@@ -132,7 +132,7 @@ kubectl create secret generic my-db-secret \
   --from-literal=postgresql-password=supersecret
 
 # Reference them during install
-helm install gwo ./helm/github-workflow-orchestrator \
+helm install gwo ./helm/gh-bot-orchestrator \
   --set app.github.auth.existingSecret=my-github-secret \
   --set postgresql.auth.existingSecret=my-db-secret \
   --set image.repository=myregistry.example.com/my-org/gh-workflow-orchestrator \
@@ -143,7 +143,7 @@ helm install gwo ./helm/github-workflow-orchestrator \
 #### Enabling ingress
 
 ```bash
-helm install gwo ./helm/github-workflow-orchestrator \
+helm install gwo ./helm/gh-bot-orchestrator \
   --set ingress.enabled=true \
   --set ingress.className=nginx \
   --set ingress.hosts[0].host=gwo.example.com \
@@ -164,7 +164,7 @@ minikube start
 minikube image load gh-workflow-orchestrator:unspecified
 
 # Install with image.pullPolicy=Never to use the local image
-helm install gwo ./helm/github-workflow-orchestrator \
+helm install gwo ./helm/gh-bot-orchestrator \
   --set image.tag=unspecified \
   --set image.pullPolicy=Never \
   --set app.github.auth.appId=123456 \
@@ -172,7 +172,7 @@ helm install gwo ./helm/github-workflow-orchestrator \
   --set app.github.auth.privateKey="dummy-key-for-testing"
 
 # Access the app via port-forward
-kubectl port-forward svc/gwo-github-workflow-orchestrator 8080:8080
+kubectl port-forward svc/gwo-gh-bot-orchestrator 8080:8080
 ```
 
 Then open http://localhost:8080.
@@ -201,12 +201,12 @@ Then open http://localhost:8080.
 | `ingress.enabled` | Enable ingress | `false` |
 | `ingress.className` | Ingress class name | `""` |
 
-See [`values.yaml`](helm/github-workflow-orchestrator/values.yaml) for the full list of configurable parameters.
+See [`values.yaml`](helm/gh-bot-orchestrator/values.yaml) for the full list of configurable parameters.
 
 ### Upgrading
 
 ```bash
-helm upgrade gwo ./helm/github-workflow-orchestrator --reuse-values \
+helm upgrade gwo ./helm/gh-bot-orchestrator --reuse-values \
   --set image.tag=v2.0.0
 ```
 
@@ -216,5 +216,5 @@ helm upgrade gwo ./helm/github-workflow-orchestrator --reuse-values \
 helm uninstall gwo
 
 # The PostgreSQL PVC is retained by default. Delete it manually if needed:
-kubectl delete pvc gwo-github-workflow-orchestrator-postgresql
+kubectl delete pvc gwo-gh-bot-orchestrator-postgresql
 ```

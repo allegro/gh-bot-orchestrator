@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "github-workflow-orchestrator.fullname" . }}
+  name: {{ include "gh-bot-orchestrator.fullname" . }}
   labels:
-    {{- include "github-workflow-orchestrator.labels" . | nindent 4 }}
+    {{- include "gh-bot-orchestrator.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "github-workflow-orchestrator.selectorLabels" . | nindent 6 }}
+      {{- include "gh-bot-orchestrator.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -18,13 +18,13 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
       labels:
-        {{- include "github-workflow-orchestrator.selectorLabels" . | nindent 8 }}
+        {{- include "gh-bot-orchestrator.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "github-workflow-orchestrator.serviceAccountName" . }}
+      serviceAccountName: {{ include "gh-bot-orchestrator.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       {{- if .Values.postgresql.enabled }}
@@ -43,58 +43,58 @@ spec:
             - name: SPRING_PROFILES_ACTIVE
               value: {{ .Values.app.springProfiles | quote }}
             - name: SPRING_DATASOURCE_URL
-              value: {{ include "github-workflow-orchestrator.postgresql.jdbcUrl" . | quote }}
+              value: {{ include "gh-bot-orchestrator.postgresql.jdbcUrl" . | quote }}
             - name: SPRING_DATASOURCE_USERNAME
-              value: {{ include "github-workflow-orchestrator.postgresql.username" . | quote }}
+              value: {{ include "gh-bot-orchestrator.postgresql.username" . | quote }}
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "github-workflow-orchestrator.postgresql.secretName" . }}
+                  name: {{ include "gh-bot-orchestrator.postgresql.secretName" . }}
                   key: postgresql-password
             - name: APP_BASE_URL
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "github-workflow-orchestrator.fullname" . }}
+                  name: {{ include "gh-bot-orchestrator.fullname" . }}
                   key: app-base-url
             - name: APP_GITHUB_SERVER_BASE_URL
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "github-workflow-orchestrator.fullname" . }}
+                  name: {{ include "gh-bot-orchestrator.fullname" . }}
                   key: github-server-base-url
             - name: APP_GITHUB_AUTH_APP_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "github-workflow-orchestrator.github.secretName" . }}
+                  name: {{ include "gh-bot-orchestrator.github.secretName" . }}
                   key: github-app-id
             - name: APP_GITHUB_AUTH_INSTALLATION_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "github-workflow-orchestrator.github.secretName" . }}
+                  name: {{ include "gh-bot-orchestrator.github.secretName" . }}
                   key: github-installation-id
             - name: APP_GITHUB_AUTH_PRIVATE_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "github-workflow-orchestrator.github.secretName" . }}
+                  name: {{ include "gh-bot-orchestrator.github.secretName" . }}
                   key: github-private-key
             - name: APP_GITHUB_AUTH_TOKEN_TIME_TO_LIVE
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "github-workflow-orchestrator.fullname" . }}
+                  name: {{ include "gh-bot-orchestrator.fullname" . }}
                   key: github-token-ttl
             - name: APP_TASKS_HANDLE_PULL_REQUEST_CHANGE_SLEEP_DURATION
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "github-workflow-orchestrator.fullname" . }}
+                  name: {{ include "gh-bot-orchestrator.fullname" . }}
                   key: task-sleep-duration
             - name: APP_CLEANUP_WORKFLOW_RUN_AVAILABILITY_INTERVAL
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "github-workflow-orchestrator.fullname" . }}
+                  name: {{ include "gh-bot-orchestrator.fullname" . }}
                   key: cleanup-interval
             - name: APP_CLEANUP_WORKFLOW_RUN_AVAILABILITY_MAX_AGE
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "github-workflow-orchestrator.fullname" . }}
+                  name: {{ include "gh-bot-orchestrator.fullname" . }}
                   key: cleanup-max-age
             - name: DB_SCHEDULER_ENABLED
               value: {{ .Values.app.dbScheduler.enabled | quote }}

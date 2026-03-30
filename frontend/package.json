@@ -1,5 +1,5 @@
 {
-    "name": "github-workflow-orchestrator-frontend",
+    "name": "gh-bot-orchestrator-frontend",
     "private": true,
     "type": "module",
     "scripts": {
