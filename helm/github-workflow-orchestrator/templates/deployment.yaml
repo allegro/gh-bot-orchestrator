@@ -1,0 +1,141 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gh-bot-orchestrator.fullname" . }}
+  labels:
+    {{- include "gh-bot-orchestrator.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "gh-bot-orchestrator.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret-github.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "gh-bot-orchestrator.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "gh-bot-orchestrator.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.postgresql.enabled }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: {{ .Values.app.springProfiles | quote }}
+            - name: SPRING_DATASOURCE_URL
+              value: {{ include "gh-bot-orchestrator.postgresql.jdbcUrl" . | quote }}
+            - name: SPRING_DATASOURCE_USERNAME
+              value: {{ include "gh-bot-orchestrator.postgresql.username" . | quote }}
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gh-bot-orchestrator.postgresql.secretName" . }}
+                  key: postgresql-password
+            - name: APP_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "gh-bot-orchestrator.fullname" . }}
+                  key: app-base-url
+            - name: APP_GITHUB_SERVER_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "gh-bot-orchestrator.fullname" . }}
+                  key: github-server-base-url
+            - name: APP_GITHUB_AUTH_APP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gh-bot-orchestrator.github.secretName" . }}
+                  key: github-app-id
+            - name: APP_GITHUB_AUTH_INSTALLATION_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gh-bot-orchestrator.github.secretName" . }}
+                  key: github-installation-id
+            - name: APP_GITHUB_AUTH_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gh-bot-orchestrator.github.secretName" . }}
+                  key: github-private-key
+            - name: APP_GITHUB_AUTH_TOKEN_TIME_TO_LIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "gh-bot-orchestrator.fullname" . }}
+                  key: github-token-ttl
+            - name: APP_TASKS_HANDLE_PULL_REQUEST_CHANGE_SLEEP_DURATION
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "gh-bot-orchestrator.fullname" . }}
+                  key: task-sleep-duration
+            - name: APP_CLEANUP_WORKFLOW_RUN_AVAILABILITY_INTERVAL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "gh-bot-orchestrator.fullname" . }}
+                  key: cleanup-interval
+            - name: APP_CLEANUP_WORKFLOW_RUN_AVAILABILITY_MAX_AGE
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "gh-bot-orchestrator.fullname" . }}
+                  key: cleanup-max-age
+            - name: DB_SCHEDULER_ENABLED
+              value: {{ .Values.app.dbScheduler.enabled | quote }}
+            - name: DB_SCHEDULER_THREADS
+              value: {{ .Values.app.dbScheduler.threads | quote }}
+            - name: DB_SCHEDULER_POLLING_INTERVAL
+              value: {{ .Values.app.dbScheduler.pollingInterval | quote }}
+            - name: SPRING_DOCKER_COMPOSE_ENABLED
+              value: "false"
+          startupProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 30
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

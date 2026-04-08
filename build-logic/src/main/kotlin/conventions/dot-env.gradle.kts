@@ -1,10 +1,6 @@
 package conventions
 
-plugins {
-    java
-}
-
-tasks.named<JavaExec>("run") {
+tasks.withType<JavaExec>().configureEach {
     val envFile = rootProject.file(".env")
     if (envFile.exists()) {
         envFile.readLines()

@@ -1,0 +1,14 @@
+apiVersion: v2
+name: gh-bot-orchestrator
+description: A Helm chart for deploying GitHub Workflow Orchestrator with PostgreSQL
+type: application
+version: 0.1.0
+appVersion: 1.0.0
+home: https://github.com/allegro/gh-bot-orchestrator
+sources:
+  - https://github.com/allegro/gh-bot-orchestrator
+keywords:
+  - github
+  - workflow
+  - orchestrator
+  - ci-cd

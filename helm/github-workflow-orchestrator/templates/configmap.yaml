@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "gh-bot-orchestrator.fullname" . }}
+  labels:
+    {{- include "gh-bot-orchestrator.labels" . | nindent 4 }}
+data:
+  app-base-url: {{ .Values.app.baseUrl | quote }}
+  github-server-base-url: {{ .Values.app.github.serverBaseUrl | quote }}
+  github-token-ttl: {{ .Values.app.github.auth.tokenTimeToLive | quote }}
+  task-sleep-duration: {{ .Values.app.tasks.handlePullRequestChange.sleepDuration | quote }}
+  cleanup-interval: {{ .Values.app.cleanup.workflowRunAvailability.interval | quote }}
+  cleanup-max-age: {{ .Values.app.cleanup.workflowRunAvailability.maxAge | quote }}
