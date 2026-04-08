@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.kagkarlsson.scheduler.boot.config.DbSchedulerCustomizer
 import com.github.kagkarlsson.scheduler.serializer.JacksonSerializer
 import com.github.kagkarlsson.scheduler.serializer.Serializer
-import com.github.kagkarlsson.scheduler.task.FailureHandler.OnFailureRetryLater
 import com.github.kagkarlsson.scheduler.task.helper.OneTimeTask
 import com.github.kagkarlsson.scheduler.task.helper.Tasks
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -14,13 +13,15 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.JdbcTemplate
 import pl.allegro.tech.github.botorchestrator.application.CheckRunEventHandler
 import pl.allegro.tech.github.botorchestrator.application.PullRequestEventHandler
+import kotlin.jvm.optionals.getOrNull
 import pl.allegro.tech.github.botorchestrator.domain.NoSlotsAvailable
 import pl.allegro.tech.github.botorchestrator.domain.workflows.WorkflowDefinitionsReader
 import java.util.Optional
 
 @Configuration
 class TasksConfig(
-    private val props: ReactToPullRequestChangeProps,
+    private val pullRequestProps: ReactToPullRequestChangeProps,
+    private val checkRunProps: ReactToCheckRunProps,
     private val eventHandler: PullRequestEventHandler,
     private val checkRunEventHandler: CheckRunEventHandler,
     private val workflowDefinitionsReader: WorkflowDefinitionsReader
@@ -39,7 +40,14 @@ class TasksConfig(
     fun reactToPullRequestsChanges(): OneTimeTask<ReactToPullRequestChangeTaskData> {
         return Tasks
             .oneTime(HANDLE_PULL_REQUEST)
-            .onFailure(OnFailureRetryLater(props.sleepDuration))
+            .onFailure { executionComplete, executionOperations ->
+                val delay = if (executionComplete.cause.getOrNull() is NoSlotsAvailable) {
+                    pullRequestProps.noSlotsSleepDuration
+                } else {
+                    pullRequestProps.sleepDuration
+                }
+                executionOperations.reschedule(executionComplete, executionComplete.timeDone.plus(delay))
+            }
             .onDeadExecutionRevive()
             .execute { inst, _ ->
                 try {
@@ -55,9 +63,11 @@ class TasksConfig(
                     val workflowConfiguration = workflowDefinitionsReader.getDefinitionFor(inst.data.workflowId)
                     eventHandler.handle(workflowConfiguration, inst.data.event)
                 } catch (e: NoSlotsAvailable) {
-                    logger.error(e) { "No available slots for ${inst.taskName}/${inst.id} for PR ${inst.data.event.data.pullRequest.htmlUrl}" }
+                    logger.warn(e) { "No available slots for ${inst.taskName}/${inst.id} for PR ${inst.data.event.data.pullRequest.htmlUrl}, will retry in ${pullRequestProps.noSlotsSleepDuration}" }
+                    throw e
                 } catch (e: Exception) {
-                    logger.error(e) { "Failed handling ${inst.id} for PR ${inst.data.event.data.pullRequest.htmlUrl}" }
+                    logger.error(e) { "Failed handling ${inst.id} for PR ${inst.data.event.data.pullRequest.htmlUrl}, will retry in ${pullRequestProps.sleepDuration}" }
+                    throw e
                 } finally {
                     MDC.remove("pullRequest")
                     MDC.remove("pullRequestNumber")
@@ -74,7 +84,14 @@ class TasksConfig(
     fun reactToCheckRunEvents(): OneTimeTask<ReactToCheckRunTaskData> {
         return Tasks
             .oneTime(HANDLE_CHECK_RUN)
-            .onFailure(OnFailureRetryLater(props.sleepDuration))
+            .onFailure { executionComplete, executionOperations ->
+                val delay = if (executionComplete.cause.getOrNull() is NoSlotsAvailable) {
+                    checkRunProps.noSlotsSleepDuration
+                } else {
+                    checkRunProps.sleepDuration
+                }
+                executionOperations.reschedule(executionComplete, executionComplete.timeDone.plus(delay))
+            }
             .onDeadExecutionRevive()
             .execute { inst, _ ->
                 try {
@@ -88,9 +105,11 @@ class TasksConfig(
                     val workflowConfiguration = workflowDefinitionsReader.getDefinitionFor(inst.data.workflowId)
                     checkRunEventHandler.handle(workflowConfiguration, inst.data.event, inst.data.pullRequestNumber)
                 } catch (e: NoSlotsAvailable) {
-                    logger.error(e) { "No available slots for ${inst.taskName}/${inst.id} for check_run ${inst.data.event.data.checkRun.id}" }
+                    logger.warn(e) { "No available slots for ${inst.taskName}/${inst.id} for check_run ${inst.data.event.data.checkRun.id}, will retry in ${checkRunProps.noSlotsSleepDuration}" }
+                    throw e
                 } catch (e: Exception) {
-                    logger.error(e) { "Failed handling ${inst.id} for check_run ${inst.data.event.data.checkRun.id}" }
+                    logger.error(e) { "Failed handling ${inst.id} for check_run ${inst.data.event.data.checkRun.id}, will retry in ${checkRunProps.sleepDuration}" }
+                    throw e
                 } finally {
                     MDC.remove("repo")
                     MDC.remove("checkRunId")

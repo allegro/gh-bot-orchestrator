@@ -9,6 +9,10 @@ app:
   tasks:
     handle-pull-request-change:
       sleep-duration: 1s
+      no-slots-sleep-duration: 30s
+    handle-check-run:
+      sleep-duration: 1s
+      no-slots-sleep-duration: 30s
   cleanup:
     workflow-run-availability:
       interval: PT5M
