@@ -1,6 +1,6 @@
 [versions]
 spring-boot = "3.5.10"
-flyway-core = "11.20.3"
+flyway-core = "12.5.0"
 flyway-database-postgresql = "11.20.2"
 integration-test = "2.2.5"
 java-jwt = "4.5.0"
