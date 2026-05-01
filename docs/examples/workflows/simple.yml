@@ -1,0 +1,44 @@
+# This workflow is defined once. gh-bot-orchestrator is then configured
+# to run it on every open PR in the whole org. Workflow gets target data
+# (repository, PR number, branch) in the original GH event in `event` input.
+ 
+name: "Simple example"
+
+on:
+  workflow_dispatch:
+    inputs:
+      slot-id:
+        type: string
+        required: true
+      event:
+        type: string
+        description: 'raw github event in json format'
+        required: true
+      concurrency-group:
+        type: string
+        required: true
+      workflow-concurrency-group:
+        type: string
+        required: true
+      comment-callback-url:
+        type: string
+        required: false
+      check-callback-url:
+        type: string
+        required: false
+      extra-params:
+        type: string
+        required: false
+
+run-name: ${{ inputs.slot-id }}
+
+jobs:
+  # Just posts a comment to the PR
+  hello-world-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post PR comment
+        uses: allegro/gh-bot-orchestrator/post-comment
+        with:
+          comment-callback-url: ${{ inputs.comment-callback-url }}
+          message: Hello, I'm the bot!

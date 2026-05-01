@@ -1,0 +1,138 @@
+# This is a more advanced workflow example:
+# We have a centralized logic that we want to apply to every PR
+# in the organization - validation of internal config file. This
+# workflow is defined in `config-validator` repo and contains
+# `validate.py` script to perform the validation. Additionally,
+# we want to post a comment with validation results to the PR
+# and use a separate github app as an author of this comment.
+
+name: "Config validation"
+
+on:
+  workflow_dispatch:
+    inputs:
+      slot-id:
+        type: string
+        required: true
+      event:
+        type: string
+        description: 'raw github event in json format'
+        required: true
+      concurrency-group:
+        type: string
+        required: true
+      workflow-concurrency-group:
+        type: string
+        required: true
+      comment-callback-url:
+        type: string
+        required: false
+      check-callback-url:
+        type: string
+        required: false
+      extra-params:
+        type: string
+        required: false
+
+run-name: ${{ inputs.slot-id }}
+
+# There are many PRs in the whole org, we don't want to exhaust GHA runners
+# gh-bot-orchestrator provides "Max Concurrent Runs" configuration in its web UI
+# to limit the number of parallel executions of the workflow. It should be
+# propagated from input to GHA concurrency.group
+concurrency:
+    group: ${{ inputs.workflow-concurrency-group }}
+    cancel-in-progress: false
+
+jobs:
+  validate-config:
+    name: Validate Config
+    permissions:
+      issues: write
+      pull-requests: write
+      contents: write
+      id-token: write
+
+    # When there are multiple pushes to the same PR in a short period of time,
+    # we are only interested in the latest event. gh-bot-orchestrator provices
+    # "Concurrency Group" configuration in its web UI to control this. One can
+    # limit it to one job per PR or one job per repository
+    concurrency:
+      group: ${{ inputs.concurrency-group }}
+      cancel-in-progress: true
+
+    steps:
+      # Checks out config-validator repo
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          path: config-validator
+
+      # Update check to in_progress
+      - name: Update check url
+        uses: allegro/gh-bot-orchestrator/update-check
+        with:
+          check-callback-url: ${{ inputs.check-callback-url }}
+          conclusion: in_progress
+          summary: 'Validation in progress'
+
+      - name: Parse JSON Input
+        id: parse
+        env:
+          EVENT: ${{ inputs.event }}
+        run: |
+          REPOSITORY_NAME=$(echo "$EVENT" | jq -r '.repository.name')
+          OWNER=$(echo "$EVENT" | jq -r '.repository.owner.login')
+          REF=$(echo "$EVENT" | jq -r '.pull_request.head.ref')
+          PR_NUMBER=$(echo "$EVENT" | jq -r '.pull_request.number')
+
+          echo TARGET_REPO="$REPOSITORY_NAME" >> $GITHUB_ENV
+          echo TARGET_OWNER="$OWNER" >> $GITHUB_ENV
+          echo TARGET_REF="$REF" >> $GITHUB_ENV
+          echo PR_NUMBER="$PR_NUMBER" >> $GITHUB_ENV
+
+      # Generate a token for a different github app to be used to post comment
+      # Token is scope to a single repository
+      - name: Generate app token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }} # config-validator repo needs to have APP_ID secret
+          private-key: ${{ secrets.APP_KEY }} # config-validator repo needs to have APP_KEY secret
+          owner: ${{ env.TARGET_OWNER }}
+          repositories: "${{ env.TARGET_REPO }}"
+
+      # Checks out target repo - the one having PR and config that should be validated
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+        with:
+          repository: '${{ env.TARGET_OWNER }}/${{ env.TARGET_REPO }}'
+          ref: '${{ env.TARGET_REF }}'
+          token: ${{ steps.generate-token.outputs.token }}
+          path: target
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Run validation
+        run: GH_TOKEN=${{ steps.generate-token.outputs.token }} python config-validator/validate.py
+
+      - name: Mark check as success
+        if: ${{ success() }}
+        uses: allegro/gh-bot-orchestrator/update-check
+        with:
+          check-callback-url: ${{ inputs.check-callback-url }}
+          conclusion: success
+          summary: 'Config is valid'
+
+      - name: Mark check as failure
+        if: failure()
+        uses: allegro/gh-bot-orchestrator/update-check
+        with:
+          check-callback-url: ${{ inputs.check-callback-url }}
+          conclusion: failure
+          summary: 'Config validation has failed'
+

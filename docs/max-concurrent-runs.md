@@ -17,7 +17,7 @@ That's why we decided to control amount of concurrency from GitHub Workflow Orch
 
 Diagram says more than 1000 words, so I'll start with it:
 
-![diagram](max-concurrent-runs-diagram.png)
+![diagram](img/max-concurrent-runs-diagram.png)
 
 ## Abandoned ideas
 
